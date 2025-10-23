@@ -3,34 +3,49 @@ import FormField from './FormField.jsx';
 import React from 'react';
 import { X } from 'lucide-react';
 
-function AddContactModal({ onClose, onAdd }) {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
+function ContactModal({ onClose, onSubmit, darkMode, title, initialData = null }) {
+  const [formData, setFormData] = useState(
+    initialData 
+      ? { name: initialData.name, email: initialData.email, phone: initialData.phone }
+      : { name: '', email: '', phone: '' }
+  );
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-    
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-    
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone is required';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const errors = {};
+
+  const { name, email, phone } = formData;
+
+  // Helper: trim safely
+  const isEmpty = (value) => !value?.trim();
+
+  // Name validation
+  if (isEmpty(name)) {
+    errors.name = 'Name is required';
+  }
+
+  // Email validation
+  if (isEmpty(email)) {
+    errors.email = 'Email is required';
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errors.email = 'Please enter a valid email address';
+  }
+
+  // Phone validation
+  if (isEmpty(phone)) {
+    errors.phone = 'Phone number is required';
+  } else if (!/^\+?\d{7,15}$/.test(phone)) {
+    errors.phone = 'Please enter a valid phone number';
+  }
+
+  setErrors(errors);
+  return Object.keys(errors).length === 0;
+};
+
 
   const handleSubmit = () => {
     if (validateForm()) {
-      onAdd(formData);
+      onSubmit(formData);
       setFormData({ name: '', email: '', phone: '' });
       setErrors({});
     }
@@ -43,13 +58,19 @@ function AddContactModal({ onClose, onAdd }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in">
+      <div className={`rounded-lg shadow-xl max-w-md w-full p-6 animate-scale-in ${
+        darkMode ? 'bg-slate-800' : 'bg-white'
+      }`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-slate-800">Add New Contact</h2>
+          <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-slate-800'}`}>
+            {title}
+          </h2>
           <button
             onClick={handleClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className={`transition-colors ${
+              darkMode ? 'text-slate-400 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'
+            }`}
           >
             <X className="w-6 h-6" />
           </button>
@@ -63,6 +84,7 @@ function AddContactModal({ onClose, onAdd }) {
             error={errors.name}
             placeholder="John Doe"
             required
+            darkMode={darkMode}
           />
 
           <FormField
@@ -73,6 +95,7 @@ function AddContactModal({ onClose, onAdd }) {
             error={errors.email}
             placeholder="john.doe@email.com"
             required
+            darkMode={darkMode}
           />
 
           <FormField
@@ -83,13 +106,18 @@ function AddContactModal({ onClose, onAdd }) {
             error={errors.phone}
             placeholder="+1 (555) 123-4567"
             required
+            darkMode={darkMode}
           />
         </div>
 
         <div className="flex gap-3 mt-6">
           <button
             onClick={handleClose}
-            className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-medium"
+            className={`flex-1 px-4 py-2 border rounded-lg transition-colors font-medium ${
+              darkMode 
+                ? 'border-slate-600 text-slate-300 hover:bg-slate-700' 
+                : 'border-slate-300 text-slate-700 hover:bg-slate-50'
+            }`}
           >
             Cancel
           </button>
@@ -97,7 +125,7 @@ function AddContactModal({ onClose, onAdd }) {
             onClick={handleSubmit}
             className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
           >
-            Add Contact
+            {initialData ? 'Update' : 'Add Contact'}
           </button>
         </div>
       </div>
@@ -105,4 +133,4 @@ function AddContactModal({ onClose, onAdd }) {
   );
 }
 
-export default AddContactModal;
+export default ContactModal;
