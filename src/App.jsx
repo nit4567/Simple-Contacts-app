@@ -35,9 +35,22 @@ export default function App() {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
-  const filteredContacts = contacts
-    .filter(contact => contact.name.toLowerCase().includes(searchQuery.toLowerCase()))
+const filteredContacts = contacts
+    .filter(contact => {
+      const query = searchQuery.toLowerCase().trim();
+      if (!query) return true; // Show all if search is empty
+      
+      const nameMatch = contact.name.toLowerCase().includes(query);
+      const emailMatch = contact.email.toLowerCase().includes(query);
+      
+      // For phone: only search if query contains digits
+      const queryDigits = query.replace(/\D/g, '');
+      const phoneMatch = queryDigits ? contact.phone.replace(/\D/g, '').includes(queryDigits) : false;
+      
+      return nameMatch || emailMatch || phoneMatch;
+    })
     .sort((a, b) => a.name.localeCompare(b.name));
+
 
   const handleAddContact = (newContactData) => {
     const initials = newContactData.name

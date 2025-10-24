@@ -9,7 +9,7 @@ function SearchBar({ searchQuery, onSearchChange, darkMode }) {
       }`" />
       <input
         type="text"
-        placeholder="Search contacts by name..."
+        placeholder="Search contacts"
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
         className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${

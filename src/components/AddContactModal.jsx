@@ -13,35 +13,26 @@ function ContactModal({ onClose, onSubmit, darkMode, title, initialData = null }
 
   const validateForm = () => {
   const errors = {};
-
-  const { name, email, phone } = formData;
-
-  // Helper: trim safely
-  const isEmpty = (value) => !value?.trim();
-
-  // Name validation
-  if (isEmpty(name)) {
+  
+  if (!formData.name.trim()) {
     errors.name = 'Name is required';
   }
-
-  // Email validation
-  if (isEmpty(email)) {
+  
+  if (!formData.email.trim()) {
     errors.email = 'Email is required';
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.email = 'Please enter a valid email address';
+  } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    errors.email = 'Email is invalid';
   }
-
-  // Phone validation
-  if (isEmpty(phone)) {
+  
+  if (!formData.phone.trim()) {
     errors.phone = 'Phone number is required';
-  } else if (!/^\+?\d{7,15}$/.test(phone)) {
+  } else if (!/^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,5}[-\s\.]?[0-9]{1,6}$/im.test(formData.phone)) {
     errors.phone = 'Please enter a valid phone number';
   }
-
+  
   setErrors(errors);
   return Object.keys(errors).length === 0;
 };
-
 
   const handleSubmit = () => {
     if (validateForm()) {
