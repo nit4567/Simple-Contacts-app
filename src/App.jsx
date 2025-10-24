@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, User, Moon, Sun, Trash2, Edit2 } from 'lucide-react';
+import { Plus, User, Moon, Sun } from 'lucide-react';
 import ContactCard from './components/ContactCard';
 import ContactModal from './components/AddContactModal';
 import SearchBar from './components/SearchBar';
+import DeleteConfirmModal from './components/DeleteConfirmModal';
 import { INITIAL_CONTACTS } from './data/initialContacts';
 
 
@@ -15,6 +16,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingContact, setEditingContact] = useState(null);
+  const [deletingContact, setDeletingContact] = useState(null);
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode');
     return saved ? JSON.parse(saved) : false;
@@ -74,10 +76,9 @@ export default function App() {
   };
 
   const handleDeleteContact = (id) => {
-    if (window.confirm('Are you sure you want to delete this contact?')) {
-      setContacts(contacts.filter(c => c.id !== id));
-    }
-  };
+  setContacts(contacts.filter(c => c.id !== id));
+  setDeletingContact(null);
+};
 
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
@@ -145,7 +146,7 @@ export default function App() {
                 contact={contact}
                 darkMode={darkMode}
                 onEdit={() => setEditingContact(contact)}
-                onDelete={() => handleDeleteContact(contact.id)}
+                onDelete={() => setDeletingContact(contact)}
                 animationDelay={index * 50}
               />
             ))}
@@ -174,6 +175,15 @@ export default function App() {
           title="Add New Contact"
         />
       )}
+      {deletingContact && (
+        <DeleteConfirmModal
+          contact={deletingContact}
+          onConfirm={() => handleDeleteContact(deletingContact.id)}
+          onCancel={() => setDeletingContact(null)}
+          darkMode={darkMode}
+        />
+      )}
+
 
       {/* Edit Contact Modal */}
       {editingContact && (

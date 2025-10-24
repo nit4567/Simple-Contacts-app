@@ -58,7 +58,7 @@ function ContactModal({ onClose, onSubmit, darkMode, title, initialData = null }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fade-in">
       <div className={`rounded-lg shadow-xl max-w-md w-full p-6 animate-scale-in ${
         darkMode ? 'bg-slate-800' : 'bg-white'
       }`}>
@@ -104,7 +104,6 @@ function ContactModal({ onClose, onSubmit, darkMode, title, initialData = null }
             value={formData.phone}
             onChange={(value) => setFormData({ ...formData, phone: value })}
             error={errors.phone}
-            placeholder="+1 (555) 123-4567"
             required
             darkMode={darkMode}
           />
